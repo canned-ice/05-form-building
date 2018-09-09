@@ -75,42 +75,55 @@ articleView.setTeasers = () => {
 };
 
 // COMMENT: Where is this function called? Why?
-// PUT YOUR RESPONSE HERE
+// On new.html so that the page's contents are rendered
 articleView.initNewArticlePage = () => {
   // TODO: Ensure the main .tab-content area is revealed. We might add more tabs later or otherwise edit the tab navigation.
-
+  $('.tab-content').show();
 
   // TODO: The new articles we create will be copy/pasted into our source data file.
   // Set up this "export" functionality. We can hide it for now, and show it once we have data to export.
+  $('#article-export').hide();
 
   $('#article-json').on('focus', function(){
     this.select();
   });
 
   // TODO: Add an event handler to update the preview and the export field if any inputs change.
-
+  $('form').on('change', 'input, textarea', articleView.create);
 };
 
 articleView.create = () => {
   // TODO: Set up a variable to hold the new article we are creating.
-  // Clear out the #articles element, so we can put in the updated preview
+  let article = {};
 
+  // Clear out the #articles element, so we can put in the updated preview
+  $('articles').html('');
 
   // TODO: Instantiate an article based on what's in the form fields:
+  article.title = $('#title').val()
+  article.author = $('#author').val()
+  article.category = $('#category').val()
+  article.authorUrl = $('#authorUrl').val()
+  article.body =  $('#body').val()
+  article.publishedOn = $('#published').prop('checked') ? new Date() : null;
 
-
+  let post = new Article(article);
   // TODO: Use our interface to the Handblebars template to put this new article into the DOM:
-
+  $('#articles').html(post.toHtml());
 
   // TODO: Activate the highlighting of any code blocks; look at the documentation for hljs to see how to do this by placing a callback function in the .each():
-  $('pre code').each();
+  $('pre code').each(function(i,block) {
+    hljs.hightlightBlock(block);
+  });
 
   // TODO: Show our export field, and export the new article as JSON, so it's ready to copy/paste into blogArticles.js:
-
+  $('#article-export').show();
+  let postString = JSON.stringify(post);
+  $('#json-output').val(postString);
 };
 
 // COMMENT: Where is this function called? Why?
-// PUT YOUR RESPONSE HERE
+// It's called in index.html to render the html elements on the page
 articleView.initIndexPage = () => {
   articles.forEach(article => $('#articles').append(article.toHtml()));
   articleView.populateFilters();
